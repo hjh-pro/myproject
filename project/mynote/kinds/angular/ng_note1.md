@@ -125,7 +125,7 @@ app.module.ts：数据模型定义文件
 
 还需要引入forms模块：
 
-![image-20200130205528681](D:\git\total\project\mynote\kinds\angular\img\image-20200130205528681.png)
+![image-20200130205528681](img\image-20200130205528681.png)
 
 运行结果：
 
