@@ -104,7 +104,7 @@ app.module.ts：数据模型定义文件
 
 ## ngModel指令的操作
 
-在页面中的代码：![Alex text](D:\git\total\project\mynote\kinds\angular\img\image-20200130205259725.png)
+在页面中的代码：![Alex text](img\image-20200130205259725.png)
 
 ```html
 <div style="text-align: center;">
@@ -119,7 +119,7 @@ app.module.ts：数据模型定义文件
 
 
 
-![image-20200130205348921](D:\git\total\project\mynote\kinds\angular\img\image-20200130205348921.png)
+![image-20200130205348921](img\image-20200130205348921.png)
 
 此时运行项目不起作用，而且控制台报错：
 
@@ -129,6 +129,6 @@ app.module.ts：数据模型定义文件
 
 运行结果：
 
-![image-20200130205625951](D:\git\total\project\mynote\kinds\angular\img\image-20200130205625951.png)
+![image-20200130205625951](img\image-20200130205625951.png)
 
-![image-20200130205657729](D:\git\total\project\mynote\kinds\angular\img\image-20200130205657729.png)
+![image-20200130205657729](img\image-20200130205657729.png)
