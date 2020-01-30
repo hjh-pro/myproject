@@ -1,4 +1,7 @@
-##myself
-自己的项目集
 
-	*	angular
+## 自己的项目集
+
+	- angular
+	
+ 
+
