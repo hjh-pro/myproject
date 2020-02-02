@@ -454,3 +454,368 @@ html中：
 ```
 
 ![g](img\g.png)
+
+# ng3
+
+##判断指令：***ngIf**
+
+html内容：
+
+```
+<p *ngIf="createIf">{{showMsg}}</p>
+```
+
+createIf为true显示，false不显示。
+
+**添加else**
+
+```html
+if下的内容：<p *ngIf="createIf;else noserve">{{showMsg}}</p>
+<ng-template #noserve>
+    <p>没有任何内容</p>
+</ng-template>
+```
+
+## 控制样式指令
+
+[ngStyle]、[ngClass]
+
+```
+<p [ngStyle]="{backgroundColor:backColor}" [ngClass]="{online: createIf==true}">背景色</p>
+
+```
+
+##循环指令：*ngFor
+
+```
+<div *ngFor="let s of arrs;let i = index;let odd = odd" [ngStyle]="{color: i>5?'skyblue':'green'}">{{s}}-{{i}}-{{odd}}</div>
+```
+
+## 基础知识项目应用
+
+1. 创建my-project文件夹；
+
+2. 安装bootstrap：cnpm i bootstrap -s
+
+3. 引入       "./node_modules/_bootstrap@4.4.1@bootstrap/dist/css/bootstrap.css"
+
+4. 创建组件
+
+   ```
+   //创建recipes组件  --spec false：将不会创建测试组件
+   ng g c recipes --spec false
+   
+   //创建列表组件
+   ng g c recipes/recipe-list --spec false
+   
+   //创建详情组件
+   ng g c recipes/recipe-detail --spec false
+   
+   //创建item组件
+   ng g c recipes/recipe-list/recipe-item --spec false
+   ```
+
+5. html页面嵌套其他的组件。
+
+![21](img\21.png)
+
+# ng4
+
+
+
+## 4.1Angular项目启动在生产环境下
+
+```
+PS F:\month\angular\ng3\my-other-app> ng serve --prod --aot
+```
+
+## 4.2Angular三大核心概念
+
+1. Component
+2. Module
+3. Route
+
+## 4.3Angular架构特色
+
+1. 依赖注入
+2. 数据绑定
+
+## 4.4组件通信
+
+### 4.4.1父组件向子组件传递数据
+
+####案例一
+
+**父组件中html的内容：**
+
+```html
+<div class="serveTop">
+  <div class="serve">
+    <app-serve *ngFor="let c of colors" [celement]="c"></app-serve>
+  </div>
+</div>
+//绑定这个celement属性，将父组件的值传递到子组件
+//celement相当于父子组件的桥梁
+```
+
+**父组件中ts的内容：**
+
+```ts
+export class AppComponent {
+  colors = ["red", "green", "blue"];
+}
+```
+
+**子组件中的html：**
+
+```html
+<ul>
+  <li>{{ element }}</li>
+</ul>
+//element：子组件中设置的变量
+```
+
+**子组件中的ts：**
+
+```ts
+import { Component, OnInit, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-serve',
+  templateUrl: './serve.component.html',
+  styleUrls: ['./serve.component.css']
+})
+export class ServeComponent implements OnInit {
+  //@Input('celement'): 取别名设置
+  //接收父组件中celement传递过来的值，然后赋值给变量element
+  //父组件向子组件传递数据注意使用@Input()
+  @Input('celement') element: string[];
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+}
+```
+
+
+
+### 4.4.2子组件向父组件传递数据
+
+####案例一
+
+**父组件中html的内容：**
+
+```html
+<app-cli (mm)="onServeClick()"></app-cli>
+//mm：父子组件通信的桥梁，此时的mm代表的点击事件
+```
+
+**父组件中ts的内容：**
+
+```ts
+import { Component } from "@angular/core";
+
+@Component({
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.css"]
+})
+export class AppComponent {
+  onServeClick(){
+    this.serveArr.push(6);
+  }
+}
+```
+
+**子组件中的html：**
+
+```html
+<button (click)="onServeCli()">按钮</button>
+//子组件触发的点击事件
+//onServeCli() : 子组件中定义的方法
+```
+
+**子组件中的ts：**
+
+```ts
+import { Component, OnInit, EventEmitter, Output } from "@angular/core";
+
+@Component({
+  selector: "app-cli",
+  templateUrl: "./cli.component.html",
+  styleUrls: ["./cli.component.css"]
+})
+export class CliComponent implements OnInit {
+  //子组件向父组件传递数据
+  //子组件向父组件传递数据注意使用@Output()、new EventEmitter() 
+  @Output('mm') cliAdd = new EventEmitter();
+
+  constructor() {}
+
+  ngOnInit() {}
+
+  onServeCli() {
+  //通过调用子组件onServeCli()方法来触发父组件的方法
+    this.cliAdd.emit(); // 通过emit()来触发父组件
+  }
+}
+```
+
+## 4.5视图封装
+
+在子组件中添加css内容：
+
+```css
+p{
+    color: aqua;
+}
+```
+
+浏览器控制台中显示：
+
+![22](img\22.png)
+
+**此处p标签是angular里面进行了封装，并不是在html页面修改的。**
+
+### [Angular中的ViewEncapsulation](https://www.cnblogs.com/wyp1988/p/11388508.html)
+
+Angular的ViewEncapsulation即封装模式
+
+- Native**(浏览器中的p标签没有进行angualr封装)**
+  - 原先浏览器 Shadow DOM 行为
+  - Native其作用是让组件样式不进不出，彻底封闭，全局样式也无法修改内部样式；
+  - 应该一般不会用，因为一般都想让外部的通用样式影响到内部，比如bootstrap的一些样式
+  - Angular将为组件创建Shadow DOM。
+  - **样式的范围是组件。**
+- Emulated**(angualr的默认样式)**
+  - 仿真模式，通过 Angular 来模拟类似 Shadow DOM 的行为，**angular的默认方式**
+  - Emulated，其作用是让组件的样式只进不出，换言之即组件内的样式不会影响到外部组件；
+  - 也就是说默认情况下，Angular内部component的样式并不会影响到上层，也就是不能操作上层的样式。编译后，不会把样式带上去。
+  - Angular不会为该组件创建Shadow DOM
+  - **样式将被限定于组件**
+  - **这是封装的默认值。**
+- None**(浏览器中的p标签没有进行angualr封装)**
+  - 无任何封装行为
+  - None方式相当于，组件内部定义的样式都是又进又出，相对于定义的全局样式。（非特殊情况慎用）
+  - 可用于希望内部样式可以影响到外部时，或者说**想在内部component中操作外部的样式时**
+  - 没有Shadow DOM。
+  - **样式不在组件范围内。**
+
+1. Angular框架为了组件之间的隔离，可能会给组件内的元素增加自动生成的属性，然后通过属性选择器限制该组件内属性的作用范围，如_nghost-c0、_ngcontent-c0等就是自动生成的属性，后面的序号用于区分不同的组件。**如果修改了ViewEncapsulation，那么这个行为会有所不同，比如设为none的话，就不会自动增加属性了**。
+
+2. 注意：**不要轻易修改component的ViewEncapsulation，因为多个开发人员进行开发时，容易不小心影响到外层样式。最好使用Emitter等方式让子组件可以修改父组件的变量，然后父组件在ngClass中用该变量来判断是否设置特定的样式class。**
+
+```ts
+import { Component, OnInit,ViewEncapsulation } from '@angular/core';
+
+@Component({
+  selector: 'app-color',
+  templateUrl: './color.component.html',
+  styleUrls: ['./color.component.css'],
+  encapsulation: ViewEncapsulation.Emulated   //Native 、 None 、Emulated
+})
+export class ColorComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+}
+
+```
+
+
+
+### 通过input向ts中传递数据
+
+####方式一：(通过input绑定属性：#属性名)
+
+html页面内容：
+
+```html
+<p>
+    <input type="text" #inputContent>
+</p>
+<button (click)="getContent(inputContent)">提取内容</button>
+```
+
+ts内容：
+
+```ts
+export class ColorComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  getContent(content: HTMLInputElement){
+    //页面元素的类型：HTMLInputElement
+    console.log(content.value);
+  }
+
+}
+```
+
+#### 方式二：(通过viewchild注解)
+
+html中的内容：
+
+```html
+<p>
+    <input type="text" #inputContent>
+</p>
+<button (click)="getContent()">提取内容</button>
+```
+
+组件中的内容：
+
+```ts
+export class ColorComponent implements OnInit {
+  //通过此方式的数据类型为：ElementRef
+  //{ static: true }是必填参数
+  @ViewChild("inputContent", { static: true }) content: ElementRef;
+
+  constructor() {}
+
+  ngOnInit() {}
+
+  getContent(/* content: HTMLInputElement */) {
+    //方式一：
+    //页面元素的类型：HTMLInputElement
+    //console.log(content.value);
+
+    //方式二
+    console.log(this.content.nativeElement.value);
+  }
+}
+```
+
+注意：在angular2.0版本中不需要**{ static: true }**这个参数，
+
+​			在angular8中需要添加此参数。
+
+#### \*另一种父组件向子组件传值的方式
+
+子组件html内容：
+
+```html
+<ng-content></ng-content>
+```
+
+父组件html内容：
+
+```ts
+<div class="serveTop">
+  <div class="serve">
+    <app-serve *ngFor="let c of colors">
+      <ul>
+        <li>{{ c }}</li>
+      </ul>
+    </app-serve>
+  </div>
+</div>
+```
+
