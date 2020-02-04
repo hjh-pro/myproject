@@ -517,7 +517,7 @@ if下的内容：<p *ngIf="createIf;else noserve">{{showMsg}}</p>
 
 5. html页面嵌套其他的组件。
 
-![21](img\21.png)
+![21](F:\month\angular\ng3\img\21.png)
 
 # ng4
 
@@ -819,3 +819,463 @@ export class ColorComponent implements OnInit {
 </div>
 ```
 
+# ng5
+
+## 常用模块
+
+| NgModule              | 导入自                      | 为何使用                                                     |
+| --------------------- | --------------------------- | ------------------------------------------------------------ |
+| `BrowserModule`       | `@angular/platform-browser` | 当你想要在浏览器中运行应用时                                 |
+| `CommonModule`        | `@angular/common`           | 当你想要使用 `NgIf` 和 `NgFor` 时                            |
+| `FormsModule`         | `@angular/forms`            | 当要构建模板驱动表单时（它包含 `NgModel` ）                  |
+| `ReactiveFormsModule` | `@angular/forms`            | 当要构建响应式表单时                                         |
+| `RouterModule`        | `@angular/router`           | 要使用路由功能，并且你要用到 `RouterLink`,`.forRoot()` 和 `.forChild()` 时 |
+| `HttpClientModule`    | `@angular/common/http`      | 当你要和服务器对话时                                         |
+
+### CommonModule
+
+导出所有基本的 Angular 指令和管道，例如 `NgIf`、`NgForOf`、`DecimalPipe` 等。 它会由 `BrowserModule` 进行二次导出，当你使用 CLI 的 `new` 命令创建新应用时，`BrowserModule` 会自动包含在根模块 `AppModule` 中。
+
+# ng6
+
+## 使用 `UppercasePipe` 进行格式化
+
+通过管道符 **|**对数据进行格式化：
+
+```
+把 hero.name 的绑定修改成这样：
+<h2>{{hero.name | uppercase}} Details</h2>
+```
+
+##添加 `FormsModule`
+
+虽然 `ngModel` 是一个有效的 Angular 指令，不过它在默认情况下是不可用的。
+
+它属于一个可选模块 `FormsModule`，你必须自行添加此模块才能使用该指令。
+
+```
+打开 AppModule (app.module.ts) 并从 @angular/forms 库中导入 FormsModule 符号。
+import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
+然后修改：
+imports: [
+  BrowserModule,
+  FormsModule
+],
+```
+
+## 什么是*AppModule*
+
+Angular 需要知道如何把应用程序的各个部分组合到一起，以及该应用需要哪些其它文件和库。 这些信息被称为*元数据（metadata）*。
+
+有些元数据位于 `@Component` 装饰器中，你会把它加到组件类上。 另一些关键性的元数据位于 [`@NgModule`](https://angular.cn/guide/ngmodules) 装饰器中。
+
+最重要的 `@NgModule` 装饰器位于顶级类 **AppModule** 上。
+
+```
+通俗的理解：
+	AppModule 就是CLi为我们自动生成的这个app.module.ts文件
+```
+
+## 主从组件
+
+创建了一个独立的、可复用的 `HeroDetailComponent` 组件
+
+用[属性绑定](https://angular.cn/guide/template-syntax#property-binding)语法来让父组件 `HeroesComponent` 可以控制子组件 `HeroDetailComponent`
+
+用 [`@Input` 装饰器](https://angular.cn/guide/template-syntax#inputs-outputs)来让 `hero` 属性可以在外部的 `HeroesComponent` 中绑定
+
+## 服务
+
+代码：
+
+src/app/hero.service.ts：
+
+```ts
+import { Injectable } from '@angular/core';
+
+import { Observable, of } from 'rxjs';
+
+import { Hero } from './hero';
+import { HEROES } from './mock-heroes';
+import { MessageService } from './message.service';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class HeroService {
+
+  constructor(private messageService: MessageService) { }
+
+  getHeroes(): Observable<Hero[]> {
+    // TODO: send the message _after_ fetching the heroes
+    this.messageService.add('HeroService: fetched heroes');
+    return of(HEROES);
+  }
+}
+```
+
+src/app/message.service.ts：
+
+```ts
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MessageService {
+  messages: string[] = [];
+
+  add(message: string) {
+    this.messages.push(message);
+  }
+
+  clear() {
+    this.messages = [];
+  }
+}
+```
+
+src/app/heroes/heroes.component.ts:
+
+```TS
+import { Component, OnInit } from '@angular/core';
+
+import { Hero } from '../hero';
+import { HeroService } from '../hero.service';
+
+@Component({
+  selector: 'app-heroes',
+  templateUrl: './heroes.component.html',
+  styleUrls: ['./heroes.component.css']
+})
+export class HeroesComponent implements OnInit {
+
+  selectedHero: Hero;
+
+  heroes: Hero[];
+
+  constructor(private heroService: HeroService) { }
+
+  ngOnInit() {
+    this.getHeroes();
+  }
+
+  onSelect(hero: Hero): void {
+    this.selectedHero = hero;
+  }
+
+  getHeroes(): void {
+    this.heroService.getHeroes()
+        .subscribe(heroes => this.heroes = heroes);
+  }
+}
+```
+
+src/app/messages/messages.component.ts:
+
+```TS
+import { Component, OnInit } from '@angular/core';
+import { MessageService } from '../message.service';
+
+@Component({
+  selector: 'app-messages',
+  templateUrl: './messages.component.html',
+  styleUrls: ['./messages.component.css']
+})
+export class MessagesComponent implements OnInit {
+
+  constructor(public messageService: MessageService) {}
+
+  ngOnInit() {
+  }
+
+}
+```
+
+src/app/messages/messages.component.html:
+
+```HTML
+<div *ngIf="messageService.messages.length">
+
+  <h2>Messages</h2>
+  <button class="clear"
+          (click)="messageService.clear()">clear</button>
+  <div *ngFor='let message of messageService.messages'> {{message}} </div>
+
+</div>
+```
+
+src/app/app.component.html:
+
+```HTML
+<h1>{{title}}</h1>
+<app-heroes></app-heroes>
+<app-messages></app-messages>
+```
+
+1. 把数据访问逻辑重构到了 `HeroService` 类中
+2. 在根注入器中把 `HeroService` 注册为该服务的提供商，以便在别处可以注入它。
+3. 使用 [Angular 依赖注入](https://angular.cn/guide/dependency-injection)机制把它注入到了组件中。
+4. 给 `HeroService` 中获取数据的方法提供了一个异步的函数签名
+5. 使用 RxJS 的 `of()` 方法返回了一个模拟英雄数据的*可观察对象* (`Observable`<Hero[]>)
+6. 在组件的 `ngOnInit` 生命周期钩子中调用 `HeroService` 方法，而不是构造函数中。
+7. 创建了一个 `MessageService`，以便在类之间实现松耦合通讯
+8. `HeroService` 连同注入到它的服务 `MessageService` 一起，注入到了组件中
+
+
+
+## 路由
+
+典型的 Angular `Route` 具有两个属性：
+
+- `path`: 用来匹配浏览器地址栏中 URL 的字符串。
+- `component`: 导航到该路由时，路由器应该创建的组件。
+
+
+
+`@NgModule` 元数据会初始化路由器，并开始监听浏览器地址的变化。
+
+下面的代码行将 `RouterModule` 添加到 `AppRoutingModule` 的 `imports` 数组中，同时通过调用 `RouterModule.forRoot()` 来用这些 `routes` 配置它：
+
+```ts
+imports: [ RouterModule.forRoot(routes) ],
+```
+
+`AppRoutingModule` 导出 `RouterModule`，以便它在整个应用程序中生效。
+
+```
+exports: [ RouterModule ]
+```
+
+### 1添加路由出口 `RouterOutlet`
+
+打开 `AppComponent` 的模板，
+
+```html
+<h1>{{title}}</h1>
+// 把 <app-heroes> 元素替换为 <router-outlet> 元素。
+//<router-outlet> 会告诉路由器要在哪里显示路由的视图。
+<router-outlet></router-outlet>
+<app-messages></app-messages>
+```
+
+### 2添加路由链接 (`routerLink`)
+
+```html
+//添加一个 <nav> 元素，并在其中放一个链接 <a> 元素
+<h1>{{title}}</h1>
+<nav>
+  <a routerLink="/heroes">Heroes</a>
+</nav>
+<router-outlet></router-outlet>
+<app-messages></app-messages>
+//nav标签可以省略
+```
+
+### 3添加默认路由
+
+```
+当应用启动时，浏览器的地址栏指向了网站的根路径。 它没有匹配到任何现存路由，因此路由器也不会导航到任何地方。 <router-outlet> 下方是空白的。
+
+要让应用自动导航到这个仪表盘，请把下列路由添加到 AppRoutingModule.Routes 数组中。
+
+
+```
+
+src/app/app-routing.module.ts:
+
+```
+{ path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+```
+
+### 4把一个*参数化*路由添加到 `AppRoutingModule.routes` 数组中
+
+src/app/app-routing.module.ts
+
+```
+{ path: 'detail/:id', component: HeroDetailComponent },
+```
+
+### 5`DashboardComponent` 中的英雄链接
+
+src/app/dashboard/dashboard.component.html (hero links)
+
+```html
+<a *ngFor="let hero of heroes" class="col-1-4"
+    routerLink="/detail/{{hero.id}}">
+  <div class="module hero">
+    <h4>{{hero.name}}</h4>
+  </div>
+</a>
+```
+
+### 6`HeroesComponent` 中的英雄链接
+
+`HeroesComponent` 中的这些英雄条目都是 <li>元素，它们的点击事件都绑定到了组件的 `onSelect()` 方法中。
+
+src/app/heroes/heroes.component.html :
+
+```html
+<ul class="heroes">
+  <li *ngFor="let hero of heroes"
+    [class.selected]="hero === selectedHero"
+    (click)="onSelect(hero)">
+    <span class="badge">{{hero.id}}</span> {{hero.name}}
+  </li>
+</ul>
+```
+
+清理 ``，只保留它的 `*ngFor`，把徽章（``）和名字包裹进一个 `` 元素中， 并且像仪表盘的模板中那样为这个 `` 元素添加一个 `routerLink` 属性。
+
+```html
+<ul class="heroes">
+  <li *ngFor="let hero of heroes">
+    <a routerLink="/detail/{{hero.id}}">
+      <span class="badge">{{hero.id}}</span> {{hero.name}}
+    </a>
+  </li>
+</ul>
+```
+
+###7支持路由的 HeroShowComponent
+
+```ts
+import { Component, OnInit } from '@angular/core';
+import {Hero} from '../hero';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+
+import { HeroService } from '../hero.service';
+
+@Component({
+  selector: 'app-hero-show',
+  templateUrl: './hero-show.component.html',
+  styleUrls: ['./hero-show.component.css']
+})
+export class HeroShowComponent implements OnInit {
+
+  hero: Hero;
+
+  constructor(
+    /*
+      ActivatedRoute 保存着到这个 HeroShowComponent 实例的路由信息。
+      这个组件对从 URL 中提取的路由参数感兴趣。 其中的 id 参数就是要显示的英雄的 id。
+    */
+    private route: ActivatedRoute,
+
+    // HeroService 从远端服务器获取英雄数据，本组件将使用它来获取要显示的英雄。
+    private heroService: HeroService,
+    // location 是一个 Angular 的服务，用来与浏览器打交道。 稍后，你就会使用它来导航回上一个视图。
+    private location: Location
+  ) { }
+
+  ngOnInit() {
+    this.getHero();
+  }
+
+  getHero(): void {
+    /*
+      route.snapshot 是一个路由信息的静态快照，抓取自组件刚刚创建完毕之后。
+      paramMap 是一个从 URL 中提取的路由参数值的字典。 "id" 对应的值就是要获取的英雄的 id。
+      路由参数总会是字符串。 JavaScript 的 (+) 操作符会把字符串转换成数字，英雄的 id 就是数字类型。
+     */
+    const id = +this.route.snapshot.paramMap.get('id');
+    this.heroService.getHero(id)
+      .subscribe(hero => this.hero = hero);
+  }
+
+  goBack() {
+    this.location.back();
+  }
+}
+```
+
+现在，当路由器会在响应形如 `~/detail/11` 的 URL 时创建 `HeroDetailComponent`。
+
+`HeroDetailComponent` 需要从一种新的途径获取*要显示的英雄*。 本节会讲解如下操作：
+
+- 获取创建本组件的路由
+- 从这个路由中提取出 `id`
+- 通过 `HeroService` 从服务器上获取具有这个 `id` 的英雄数据。
+
+先添加下列导入语句：
+
+src/app/hero-detail/hero-detail.component.ts:
+
+```ts
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+
+import { HeroService }  from '../hero.service';
+```
+
+然后把 `ActivatedRoute`、`HeroService` 和 `Location` 服务注入到构造函数中，将它们的值保存到私有变量里：
+
+src/app/hero-detail/hero-detail.component.ts:
+
+```ts
+constructor(
+  private route: ActivatedRoute,
+  private heroService: HeroService,
+  private location: Location
+) {}
+```
+
+从路由参数中提取 id：
+
+```ts
+ngOnInit(): void {
+  this.getHero();
+}
+
+getHero(): void {
+  const id = +this.route.snapshot.paramMap.get('id');
+  this.heroService.getHero(id)
+    .subscribe(hero => this.hero = hero);
+}
+```
+
+### 8添加 `HeroService.getHero()`
+
+src/app/hero.service.ts (getHero)：
+
+```ts
+getHero(id: number): Observable<Hero> {
+  // TODO: send the message _after_ fetching the hero
+  this.messageService.add(`HeroService: fetched hero id=${id}`);
+  return of(HEROES.find(hero => hero.id === id));
+}
+```
+
+> **注意，反引号 ( ` ) 用于定义 JavaScript 的模板字符串字面量，以便嵌入 `id`。**
+
+### 9返回到上一个路由
+
+把一个*后退*按钮添加到组件模板的底部，并且把它绑定到组件的 `goBack()` 方法。
+
+src/app/hero-detail/hero-detail.component.html (back button)：
+
+```
+<button (click)="goBack()">go back</button>
+```
+
+在组件类中添加一个 `goBack()` 方法，利用[你以前注入的](https://angular.cn/tutorial/toh-pt5#hero-detail-ctor) `Location` 服务在浏览器的历史栈中后退一步。
+
+src/app/hero-detail/hero-detail.component.ts (goBack)：
+
+```
+goBack(): void {
+  this.location.back();
+}
+```
+
+###10Summary：
+
+- 添加了 Angular *路由器*在各个不同组件之间**导航**。
+- 使用一些 `` 链接和一个 `` 把 `AppComponent` 转换成了一个导航用的壳组件。
+- 在 `AppRoutingModule` 中配置了路由器。
+- 定义了一些**简单路由**、一个**重定向路由**和一个**参数化路由**。
+- 在 <a> 元素中使用了 routerLink 指令。
+- 把一个紧耦合的**主从视图**重构成了**带路由的详情视图**。
+- 使用**路由链接参数**来**导航**到所选英雄的详情视图。
+- 在多个组件之间**共享**了 `HeroService` 服务。
