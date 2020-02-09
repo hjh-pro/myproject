@@ -124,7 +124,7 @@ index a55bb8e..10681c7 100644
 
 git log 文件名
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\93573fbb96854e9488098620fab9bda3\wps1.jpeg)
+![img](img\wps1.jpeg)
 
 显示当前分支的文件的提交记录
 
@@ -138,7 +138,7 @@ git checkout 文件名
 
 **文件到分支里面****[回退]**
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\8e57d1068eed44f4a1d85262fb63daec\wps2.jpeg)
+![img](img\wps2.jpeg)
 
  
 
@@ -146,7 +146,7 @@ git checkout 文件名
 
 Git reset –hard HEAD^  回退上一个版本
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\e94d86f754ce48eb8db44c64492c89e1\wps3.jpeg)
+![img](img\wps3.jpeg)
 
  
 
@@ -158,7 +158,7 @@ Git reset --hard 版本号
 
 **05【掌握】工作区和暂存区**
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\7e433b0b0ac343c08d6d1a4e9ca0bed2\wps5.jpeg)
+![img](img\wps5.jpeg)
 
  
 
@@ -170,7 +170,7 @@ Git reset --hard 版本号
 
 **06【掌握】文件管理-删除文件**
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\ff6d8d12b121427a828c3a3c71f20477\wps6.jpeg)
+![img](img\wps6.jpeg)
 
  
 
@@ -220,7 +220,7 @@ git merge 分支名
 
 **10【了解】分支管理-Bug分支**
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\5d0eb2f9358941a58f5f80212a5c2d02\wps7.jpeg)
+![img](img\wps7.jpeg)
 
  
 
@@ -228,13 +228,13 @@ git merge 分支名
 
  
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\d7f0ccc9c39345bea087f84c4b65e78d\wps8.jpeg)
+![img](img\wps8.jpeg)
 
  
 
 列出当前分支存储的所有工作环境
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\ea868fa1e7f94c9eb9bd1547c8b7c5d9\wps9.jpeg)
+![img](img\wps9.jpeg)
 
  
 
@@ -254,11 +254,11 @@ git merge 分支名
 
 **在****github****上创建仓库**
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\6639aee6b2664061a37661abd0dc5893\wps10.jpeg)
+![img](img\wps10.jpeg)
 
  
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\b88cfe0d467f451dbe6cbaaf8bea3290\wps11.jpeg)
+![img](img\wps11.jpeg)
 
 **3****，从自己远程仓库克隆代码**
 
@@ -288,19 +288,19 @@ git checkout -b dev origin/dev
 
  
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\7955d14210ae40d086a34690c020ec86\wps12.jpeg)
+![img](img\wps12.jpeg)
 
 **13【掌握】分支管理-多人协作**
 
 **要查看远程库的信息，用****git remote：**
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\3dd7caed0b8149e3b426527432ef86e4\wps13.jpeg)
+![img](img\wps13.jpeg)
 
  
 
 **要查看远程库的详细信息，用****git remote -v：**
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\cb0430250d3d45cc8e7d6859b8698589\wps14.jpeg)
+![img](img\wps14.jpeg)
 
  
 
@@ -336,7 +336,7 @@ git pull origin master
 
 此时B提交时会出现
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\7db58adcc5644f31b78ef195c6fe8590\wps15.jpeg)
+![img](img\wps15.jpeg)
 
  
 
@@ -368,7 +368,7 @@ git pull origin master
 
 在码云上创建一个新的项目，选择右上角用户头像 -> 菜单“控制面板”，然后点击“创建项目”：
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\3fd0823a026a4bfb83e5cdaaeb4e48a5\wps16.jpeg)
+![img](img\wps16.jpeg)
 
  
 
@@ -426,7 +426,7 @@ b. user.name： "提交时显示的名字，自定义。"
 
 c. 等价于git命令： git config --global user.name/user.email "xxxx"
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\bf5284a298214356b877f6bf5d995eb5\wps17.jpeg)
+![img](img\wps17.jpeg)
 
  
 
@@ -436,13 +436,13 @@ c. 等价于git命令： git config --global user.name/user.email "xxxx"
 
 1、生成 key 路径： Window --- Preferences --- General --- Network Connections --- SSH2 --- Key Management --- Generate RSA Key ---
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\a4a6dfc78ed946a58d7f15f2df6e3e44\wps18.jpeg)
+![img](img\wps18.jpeg)
 
  
 
 ​    2、获取 key 路径： Window --- Preferences --- General --- Network Connections --- SSH2 --- General
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\745110949e6644eaa54d1392208d549d\wps19.jpeg)
+![img](img\wps19.jpeg)
 
  
 
@@ -450,7 +450,7 @@ c. 等价于git命令： git config --global user.name/user.email "xxxx"
 
 1、步骤： 登录码云 --- 进入 个人设置中心 --- SSH公钥 （即： 用户 ssh key）
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\b0eb455ffce648e9abbc372f5a076cb7\wps20.jpeg)
+![img](img\wps20.jpeg)
 
  
 
@@ -468,7 +468,7 @@ c. 等价于git命令： git config --global user.name/user.email "xxxx"
 
 返回： Welcome to Gitee.com, xxx ! ---- 则表示添加key成功！如下
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\42c3d67f02a94f2dad1a32e6f603961d\wps21.png)
+![img](img\wps21.png)
 
  
 
@@ -476,7 +476,7 @@ c. 等价于git命令： git config --global user.name/user.email "xxxx"
 
 1、码云上创建一个项目，名字：helloworld 注意不要创建README.md这个文件
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\715c18887204489183b375f1ee2f58a1\wps22.jpeg)
+![img](img\wps22.jpeg)
 
  
 
@@ -484,7 +484,7 @@ c. 等价于git命令： git config --global user.name/user.email "xxxx"
 
 2、Eclipse上创建一个项目，名字：helloworld
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\74a3e851c4c040e9a619760605ee9723\wps23.jpeg)
+![img](img\wps23.jpeg)
 
  
 
@@ -492,7 +492,7 @@ c. 等价于git命令： git config --global user.name/user.email "xxxx"
 
 3、Eclipse项目分享到码云： 选中项目gitee --- 右键 --- Team --- Share Project --- Git --- 如下
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\a64020b37b7446d9871e9b38e5e16430\wps24.jpeg)
+![img](img\wps24.jpeg)
 
  
 
@@ -500,15 +500,15 @@ c. 等价于git命令： git config --global user.name/user.email "xxxx"
 
 选择中要提交的文件添加到暂存区
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\9a9d8a07a6bb4311b913531145c4cd41\wps25.jpeg)
+![img](img\wps25.jpeg)
 
  
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\4f4713e45de04db3af7c1429a5a4b9f4\wps26.jpeg)
+![img](img\wps26.jpeg)
 
  
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\4f1717d70fb84c31a3e2af4ce9652352\wps27.jpeg)
+![img](img\wps27.jpeg)
 
  
 
@@ -520,17 +520,17 @@ push到gitee
 
 右键项目--team-->push Branch master
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\91247b51171a4c7c890268931f42f1a1\wps28.jpeg)
+![img](img\wps28.jpeg)
 
  
 
 输入密码找回的问题
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\94fdae42ae8c4d6392169b411a57dcec\wps29.jpeg)
+![img](img\wps29.jpeg)
 
  
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\cc273f6d2c2d4e54919723269d0db655\wps30.jpeg)
+![img](img\wps30.jpeg)
 
  
 
@@ -546,13 +546,13 @@ push到gitee
 
 右击项目-》选择Team-》点击pull，即可(或者选择第二个pull，参数是master)。
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\8bb2166baa34494f95f6cb997bd433b5\wps31.png)
+![img](img\wps31.png)
 
  
 
 创建分支：
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\99f4584ab4a545b58d75955b0e96caa5\wps32.png)
+![img](img\wps32.png)
 
  
 
@@ -562,11 +562,11 @@ push到gitee
 
 删除分支：
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\b5e3780466944f92954feb26f6d190f8\wps33.png)
+![img](img\wps33.png)
 
  
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\6d61778e1b084f40bc12ee5e3907e3cc\wps34.jpeg)
+![img](img\wps34.jpeg)
 
  
 
@@ -582,27 +582,27 @@ push到gitee
 
 1，找到项目地址
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\11d2e6a54e9740b1bd756c644f17b1e1\wps35.jpeg)
+![img](img\wps35.jpeg)
 
  
 
 2，项目区域右键import  选择git
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\785acf271bb14876a464d75cf7d99676\wps36.png)
+![img](img\wps36.png)
 
  
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\df92a6eea87141429f2dfe67e33cbf37\wps37.png)
+![img](img\wps37.png)
 
  
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\dd597d33b7f144f1a80f547f14820d2c\wps38.jpeg)
+![img](img\wps38.jpeg)
 
  
 
 选择保存路径完事
 
-![img](data\qqAC860E386EC9643055C01F91E84D8F92\ab9a11e14e054493b426bcf81537658c\wps39.jpeg)
+![img](img\wps39.jpeg)
 
  
 
