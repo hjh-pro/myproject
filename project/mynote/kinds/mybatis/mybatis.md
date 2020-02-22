@@ -764,3 +764,79 @@ public interface UserMapper {
 }
 ```
 
+# 15、mybatis.xml的完整配置
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--引入头文件-->
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--主配置的入口-->
+<configuration>
+
+	<!-- 
+		"(properties?,settings?,typeAliases?,typeHandlers?,
+		objectFactory?,objectWrapperFactory?,reflectorFactory?,
+		plugins?,environments?,databaseIdProvider?,mappers?)"
+	 -->
+	
+    <!--加载properties文件-->
+    <properties resource="db.properties" />
+
+    <!--配置日志输出信息-->
+    <settings>
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+
+    <!--配置字段别名
+        不影响映射文件中的com.hjh.domain.User
+    -->
+    <typeAliases>
+        <!--第一种方式(不推荐)-->
+        <!--<typeAlias type="com.hjh.domain.User" alias="User" />-->
+        <!--第二种配置方法（推荐）
+            将com.hjh.domain包下的所有实体类都改写成第一种方式的样式
+            批量配置包中的实体类
+        -->
+        <package name="com.hjh.domain" />
+    </typeAliases>
+    
+    <!-- 配置分页插件 -->
+    <!-- 执行原理，通过拦截器拦截对sql进行改造，再返回出去 -->
+    <plugins>
+    	<plugin interceptor="com.github.pagehelper.PageInterceptor">
+    	</plugin>
+    </plugins>
+
+    <!--配置数据库连接
+        default:默认使用哪一个数据库连接
+    -->
+    <!-- default属性选择此次开发时需要的数据库环境的id值即可 (database1、database2)-->
+    <environments default="mysql">
+        <environment id="mysql">
+            <!-- 配置mybatis的事务管理器 -->
+            <transactionManager type="JDBC"></transactionManager>
+            <!--POOLED:连接池-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+        <!--配置oracle-->
+        <!--<environment id="mysql">
+            <transactionManager type=""></transactionManager>
+            <dataSource type=""></dataSource>
+        </environment>-->
+    </environments>
+    
+    <!-- 配置映射 -->
+    <mappers>
+        <mapper resource="com/hjh/mapping/DeptMapper.xml"/>
+        <mapper resource="com/hjh/mapping/EmpMapper.xml"/>
+    </mappers>
+</configuration>
+```
+
