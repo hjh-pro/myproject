@@ -861,3 +861,513 @@ v-on：绑定事件，简写成：@click="方法名"
 </html>
 ```
 
+# 7、组件
+
+## 7.1创建组件
+
+**Vue.component('组件的名称',{template:'模板的选择器'})**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    <my-component></my-component>
+    <my-component2></my-component2>
+    <my-component3></my-component3>
+    <my-component4></my-component4>
+  </div>
+
+  <template id="temp1">
+    <div>
+      <div>哈哈哈哈</div>
+      <p>我是p标签</p>
+      <h1>我是个大大的h1</h1>
+    </div>
+  </template>
+
+  <script>
+    var num = 3
+    // 1 使用Vue.extend来组件组件
+    // 按照java的开发思想，变量名往往是驼峰规则。
+    // vue定义组件时可以使用驼峰规则，但是，使用组件时如果存在驼峰，应当全部改为小写，并将每个单词用 - 连接
+    Vue.component('myComponent', Vue.extend({
+      template: '<h3>这是用extend组件的组件</h3>' // template就是组件要展示的内容，可以是html标签
+    }))
+
+    // 不使用extend去组件组件
+    Vue.component('myComponent2', {
+      template: '<h4>不使用extend去组件组件</h4>'
+    })
+
+    // 不论用哪种方式去组件组件，组件template属性只能有一个。并且有且只能有一个根节点
+    // ES6语法：反引号 ` ES6中用来解决字符串拼接烦恼的新引号。在两个反引号之间可以写任何内容，不需要使用 + 拼接
+    // 如果在`中需要使用到变量，直接使用模板语法${}
+    Vue.component('myComponent3', {
+      template: `
+            <div><h4>不使用extend去组件组件</h4>
+                  <div>${num}</div></div>
+              `
+    })
+
+    // 3.使用template
+    Vue.component('myComponent4', {
+      template: '#temp1'
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+      }
+    })
+
+  </script>
+</body>
+</html>
+```
+
+
+
+## 7.2组件中的data和methods
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    <my-component></my-component>
+  </div>
+
+  <template id="temp1">
+    <div>
+      <div>哈哈哈哈 {{count}}</div>
+      <button @click="add">点我</button>
+    </div>
+  </template>
+
+  <script>
+    // 3.使用template
+    Vue.component('myComponent', {
+      template: '#temp1',
+      // Vue 组件中的data必须是一个方法，并且返回一个对象
+      // 组件的存在是为了复用性，定义了一个组件后，可能会有多个地方使用到该组件。
+      // 如果按照data: {}的写法，多个组件会复用同一个data，降低组件的复用性，而定义为function则不会。
+      data() {
+        return {
+          count: 0
+        }
+      },
+      methods: {
+        add() {
+          this.count++
+        }
+      }
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+      }
+    })
+
+  </script>
+</body>
+</html>
+```
+
+
+
+## 7.3Vue私有组件
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    <my-component></my-component>
+  </div>
+
+  <div id="app2">
+    <my-component></my-component>
+    <my-component2></my-component2>
+  </div>
+
+  <template id="temp1">
+    <div>
+      <div>哈哈哈哈 {{count}}</div>
+      <button @click="add">点我</button>
+    </div>
+  </template>
+
+  <template id="temp2">
+    <div>
+      <div>我是私有组件</div>
+    </div>
+  </template>
+
+  <script>
+    // 3.使用template
+    Vue.component('myComponent', {
+      template: '#temp1',
+      // Vue 组件中的data必须是一个方法，并且返回一个对象
+      // 组件的存在是为了复用性，定义了一个组件后，可能会有多个地方使用到该组件。
+      // 如果按照data: {}的写法，多个组件会复用同一个data，降低组件的复用性，而定义为function则不会。
+      data() {
+        return {
+          count: 0
+        }
+      },
+      methods: {
+        add() {
+          // Vue中，建议js代码结尾不要有分号。建议字符串用单引号包起来。
+          // 在严格语法中，分号和双引号是不符合语法规范的，会报错
+          this.count++
+        }
+      }
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+      }
+    })
+    var vue2 = new Vue({
+      el: '#app2',
+      data: {
+      },
+      components: { // 定义私有组件的方式：
+        // 组件名称建议用引号包起来。如果不包起来，在严格语法情况下会报警告，需要改成-。而方法、变量中是不允许有横线的，就会报错、
+        'myComponent2': {
+          template: '#temp2'
+        }
+      }
+    })
+  </script>
+</body>
+</html>
+```
+
+
+
+## 7.4组件切换的两种方式
+
+方式一：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+
+<body>
+
+  <div id="app">
+    <button @click="flag=true">登录</button>
+    <button @click="flag=false">注册</button>
+    <login v-if="flag"></login>
+    <register v-else></register>
+  </div>
+
+  <script>
+    Vue.component('login', {
+      template: '<p>我是登录组件</p>'
+    })
+    Vue.component('register', {
+      template: '<p>我是注册组件</p>'
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+        flag: true
+      }
+    })
+
+  </script>
+
+</body>
+
+</html>
+```
+
+方式二：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<style>
+  /* v-enter 这是个时间点，是进入之前，元素的起始状态，此时还没有进入 */
+  /* v-leave-to 这是个时间点，是动画离开之后，元素的终止状态，此时，元素 动画已经结束了 */
+  .component-enter,
+  .component-leave-to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  /* v-enter-active 入场动画的时间段 */
+  /* v-leave-active 离场动画的时间段 */
+  .component-enter-active,
+  .component-leave-active {
+    transition: all 0.5s ease;
+  }
+</style>
+
+<body>
+
+  <div id="app">
+    <button @click="componentName='login'">登录</button>
+    <button @click="componentName='register'">注册</button>
+
+    <!-- transition提供了mode属性，设置组件切换时的模式 -->
+    <transition name="component" mode="out-in">
+      <!-- 
+        Vue提供了component，来展示对应名称的组件。
+        这是个占位符，使用:is来指定要展示的组件名称
+       -->
+      <component :is="componentName"></component>
+    </transition>
+
+  </div>
+
+  <script>
+    Vue.component('login', {
+      template: '<p>我是登录组件</p>'
+    })
+    Vue.component('register', {
+      template: '<p>我是注册组件</p>'
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+        componentName: 'login'
+      }
+    })
+
+  </script>
+</body>
+</html>
+```
+
+
+
+## 7.5父组件向子组件传值
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    <!-- 父组件向子组件传值。属性名称，也需要使用- -->
+    <my-component :parent-msg="msg"></my-component>
+  </div>
+
+  <template id="temp1">
+    <div>
+      <div>{{title}}</div>
+      <!-- 经过测试，子组件无法直接使用到父组件中的data -->
+      <!-- <div>{{msg}}</div> -->
+      <div>{{parentMsg}}</div>
+      <button @click="changeMsg">修改</button>
+    </div>
+  </template>
+
+  <script>
+    var vue = new Vue({
+      el: '#app',
+      data: {
+        msg: '我是父组件中的msg'
+      },
+      components: {
+        'my-component': {
+          template: '#temp1',
+          data() {
+            return {
+              title: '我是标题'
+            }
+          },
+          methods: {
+            changeMsg() {
+              this.parentMsg = '我被修改了'
+            }
+          },
+          // props中的数据，都是通过父组件传递给子组件的。
+          // props中的数据都是只读的，无法去赋值
+          props: {
+            parentMsg: { // props使用数组是非常不标准的写法。建议使用对象，并给每一个prop声明类型和默认值
+              type: String,
+              default: null
+            }
+          }
+        }
+      }
+    })
+  </script>
+</body>
+</html>
+```
+
+
+
+## 7.6父组件向子组件传递方法
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    {{msg}}<br/>
+    {{title}}
+    <!-- 
+      父组件向子组件传递方法，需要使用v-on。 
+      v-on属性表示子组件调用方法的名称。值表示父组件传递的方法。
+      这里也不能使用驼峰规则。建议也不要使用 - ，这里的名称就使用单个单词
+    -->
+    <my-component @change="changeMsg"></my-component>
+  </div>
+
+  <template id="temp1">
+    <div>
+      <!-- 通过点击修改按钮，修改父组件中的msg -->
+      <button @click="changeMsg">修改</button>
+    </div>
+  </template>
+
+  <script>
+    var vue = new Vue({
+      el: '#app',
+      data: {
+        msg: '我是父组件中的msg',
+        title: '我是父组件的标题'
+      },
+      methods: {
+        changeMsg(msg, title) {
+          this.msg = msg
+          this.title = title
+        }
+      },
+      components: {
+        'my-component': {
+          template: '#temp1',
+          methods: {
+            changeMsg() {
+              // emit 第一个参数是要调用的方法名称。第二个参数以后都表示这个方法需要传递的参数
+              this.$emit('change', '修改了父组件中的msg', '修改了父组件的title')
+            }
+          }
+        }
+      }
+    })
+
+  </script>
+</body>
+</html>
+```
+
+
+
+## 7.7父组件调用子组件的方法
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    <button @click="getElement">获取元素</button>
+    <button @click="handlerChildFunction">调用子组件方法</button>
+    <div ref="div1">我是内容</div>
+    <my-component ref='com1'></my-component>
+  </div>
+
+  <template id="temp1">
+    <div>
+    </div>
+  </template>
+
+  <script>
+    var vue = new Vue({
+      el: '#app',
+      methods: {
+        getElement() {
+          // 1. 获取dom元素。就用传统的js去获取。但是vue不推荐这种用法
+          // let text = document.getElementById('div1').innerText
+          // 2. 获取dom元素，使用ref （reference）。这个是vue提供的写法。建议使用这个。
+          let text = this.$refs.div1.innerText
+          console.log(text)
+        },
+        handlerChildFunction() {
+          // 父组件调用子组件方法。，直接使用ref去调用方法。方法的用法和子组件中一模一样
+          this.$refs.com1.childFunction()
+        }
+      },
+      components: {
+        'my-component': {
+          template: '#temp1',
+          methods: {
+            childFunction() {
+              console.log('子组件方法被调用了')
+            }
+          }
+        }
+      }
+    })
+  </script>
+</body>
+</html>
+```
+
