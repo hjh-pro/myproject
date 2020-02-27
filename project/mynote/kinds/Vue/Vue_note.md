@@ -1371,3 +1371,684 @@ v-on：绑定事件，简写成：@click="方法名"
 </html>
 ```
 
+# 8、Vue路由
+
+## 8.1路由的基本使用
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+  <script src="./lib/vue-router-3.0.1.js"></script>
+</head>
+<style>
+  /* v-enter 这是个时间点，是进入之前，元素的起始状态，此时还没有进入 */
+  /* v-leave-to 这是个时间点，是动画离开之后，元素的终止状态，此时，元素 动画已经结束了 */
+  .component-enter,
+  .component-leave-to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  /* v-enter-active 入场动画的时间段 */
+  /* v-leave-active 离场动画的时间段 */
+  .component-enter-active,
+  .component-leave-active {
+    transition: all 0.5s ease;
+  }
+</style>
+
+<body>
+
+  <div id="app">
+    <!-- router-link控制组件的切换。router-link默认会被渲染成a标签 -->
+    <!-- 如果不想被渲染成a标签，可以使用tag属性，指定router-link被渲染成哪种标签 -->
+    <router-link to="/login" tag="button">登录</router-link>
+    <router-link to="/register">注册</router-link>
+
+    <transition name="component" mode="out-in">
+      <!-- 这是个坑，专门作为一个占位符。当路由进行切换的时候，在路由中匹配到对应的组件，就会展示在这个坑里  -->
+      <router-view></router-view>
+    </transition>
+
+  </div>
+
+  <script>
+    var login = {
+      template: '<p>我是登录组件</p>'
+    }
+    var register = {
+      template: '<p>我是注册组件</p>'
+    }
+
+    // 当引入了vue-router之后，在window全局对象中，就有了一个VueRouter构造函数
+    let routerObj = new VueRouter({
+      routes: [ // routes中定义了路由的规则
+        {path: '/', redirect: '/login'}, // redirect就是重定向，访问path时，会被重定向到redirect指定的路由。这里是指路由的重定向，而非请求重定向，和后端的redirect是两码事
+        {path: '/login', component: login}, // 对象中有两个属性：path：表示路由的url，component：表示路由跳转到的组件
+        {path: '/register', component: register}
+      ]
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+      },
+      router: routerObj
+    })
+
+  </script>
+</body>
+</html>
+```
+
+## 8.2路由参数
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+  <script src="./lib/vue-router-3.0.1.js"></script>
+</head>
+<style>
+  /* v-enter 这是个时间点，是进入之前，元素的起始状态，此时还没有进入 */
+  /* v-leave-to 这是个时间点，是动画离开之后，元素的终止状态，此时，元素 动画已经结束了 */
+  .component-enter,
+  .component-leave-to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  /* v-enter-active 入场动画的时间段 */
+  /* v-leave-active 离场动画的时间段 */
+  .component-enter-active,
+  .component-leave-active {
+    transition: all 0.5s ease;
+  }
+</style>
+
+<body>
+  <!-- 
+    以往的非前后端分离项目，如果需要根据id获取某条数据，在另一个页面去展示？
+      页面A点击，传递id给后端，后端查出，转发到页面B，页面B展示。
+    前后端分离项目？
+      页面A点击，传递id给页面B，页面B 在created中根据id将数据查出，接着，在页面B展示。
+   -->
+  <div id="app">
+    <!-- 只需要在url后面用?去传参即可，不需要对路由进行任何修改 -->
+    <router-link to="/login?id=123&name=张三" tag="button">登录</router-link>
+    <router-link to="/register/12312/李四">注册</router-link>
+
+    <transition name="component" mode="out-in">
+      <router-view></router-view>
+    </transition>
+
+  </div>
+
+  <script>
+    var login = {
+      template: '<p>我是登录组件 --- {{$route.query.id}} --- {{$route.query.name}}</p>',
+      created() {
+        // this.$route获取路由对象
+        // route.query只适用于 ？ 后面拼接的参数
+        console.log(this.$route.query.id, this.$route.query.name)
+      }
+    }
+    var register = {
+      template: '<p>我是注册组件 --- {{$route.params.id}} --- {{$route.params.name}}</p>',
+      created() {
+        // this.$route获取路由对象
+        console.log(this.$route.params.id, this.$route.params.name)
+      }
+    }
+
+    let routerObj = new VueRouter({
+      routes: [
+        {path: '/login', component: login},
+        {path: '/register/:id/:name', component: register}
+      ]
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+      },
+      router: routerObj
+    })
+  </script>
+</body>
+</html>
+```
+
+## 8.3路由的嵌套
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+  <script src="./lib/vue-router-3.0.1.js"></script>
+</head>
+<style>
+  /* v-enter 这是个时间点，是进入之前，元素的起始状态，此时还没有进入 */
+  /* v-leave-to 这是个时间点，是动画离开之后，元素的终止状态，此时，元素 动画已经结束了 */
+  .component-enter,
+  .component-leave-to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  /* v-enter-active 入场动画的时间段 */
+  /* v-leave-active 离场动画的时间段 */
+  .component-enter-active,
+  .component-leave-active {
+    transition: all 0.5s ease;
+  }
+</style>
+
+<body>
+
+  <div id="app">
+    <!-- router-link控制组件的切换。router-link默认会被渲染成a标签 -->
+    <!-- 如果不想被渲染成a标签，可以使用tag属性，指定router-link被渲染成哪种标签 -->
+    <router-link to="/login" tag="button">登录</router-link>
+    <router-link to="/register">注册</router-link>
+
+    <transition name="component" mode="out-in">
+      <!-- 这是个坑，专门作为一个占位符。当路由进行切换的时候，在路由中匹配到对应的组件，就会展示在这个坑里  -->
+      <router-view></router-view>
+    </transition>
+
+  </div>
+
+  <template id="login">
+    <div>
+      <p>我是登录组件</p>
+      <router-link to="/login/loginByPassword" tag="button">账密登录</router-link>
+      <!-- 不建议这么写，建议像上面，把父级路由也加上 -->
+      <router-link to="loginBySms">验证码登录</router-link>
+      <router-view></router-view>
+    </div>
+  </template>
+
+  <script>
+    var login = {
+      template: '#login'
+    }
+    var register = {
+      template: '<p>我是注册组件</p>'
+    }
+    var passwordLogin = {
+      template: '<p>密码登录</p>'
+    }
+    var smsLogin = {
+      template: '<p>验证码登录</p>'
+    }
+
+    // 当引入了vue-router之后，在window全局对象中，就有了一个VueRouter构造函数
+    let routerObj = new VueRouter({
+      routes: [ // routes中定义了路由的规则
+        { path: '/', redirect: '/login' }, // redirect就是重定向，访问path时，会被重定向到redirect指定的路由。这里是指路由的重定向，而非请求重定向，和后端的redirect是两码事
+        {
+          path: '/login',
+          component: login,
+          children: [ // children属性用于指定子路由，通过子路由可以实现路由的嵌套
+            // children里的属性和路由是一毛一样的，path和component
+            { path: 'loginByPassword', component: passwordLogin },
+            { path: 'loginBySms', component: smsLogin }
+          ]
+        },
+        { path: '/register', component: register } // 对象中有两个属性：path：表示路由的url，component：表示路由跳转到的组件
+      ]
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+      },
+      router: routerObj
+    })
+
+  </script>
+</body>
+</html>
+```
+
+## 8.4名称拼接
+
+### 8.4.1方式一
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <!-- 1.导入vue的包 -->
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+  
+  <div id="app">
+    <!-- 
+      分析：如果使firstName和lastName被修改时，同步修改fullName？
+     -->
+    <input type="text" v-model="firstName" @keyup="handlerName">
+    <input type="text" v-model="lastName" @keyup="handlerName">
+    <input type="text" v-model="fullName">
+
+  </div>
+
+<script>
+  var vue = new Vue({
+    el: '#app',
+    data: {
+      firstName: '',
+      lastName: '',
+      fullName: ''
+    },
+    methods: {
+      // 第一种方式：给前两个表单加上键盘抬起事件。当触发事件时，拼接两个name，为fullName赋值。
+      handlerName() {
+        this.fullName = this.firstName + this.lastName
+      }
+    }
+  })
+</script>
+</body>
+</html>
+```
+
+### 8.4.2方式二(Watch)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <!-- 1.导入vue的包 -->
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+  
+  <div id="app">
+    <!-- 
+      分析：如果使firstName和lastName被修改时，同步修改fullName？
+     -->
+    <input type="text" v-model="firstName">
+    <input type="text" v-model="lastName">
+    <input type="text" v-model="fullName">
+
+  </div>
+
+<script>
+  var vue = new Vue({
+    el: '#app',
+    data: {
+      firstName: '',
+      lastName: '',
+      fullName: ''
+    },
+    watch: { // 监听器，可以监听某个属性
+        'firstName': function(newVal, oldVal) { // 格式：要监听的属性:function(newVal, oldVal)
+          this.fullName = newVal + this.lastName
+        },
+        // 使用监听器，可以直接对属性进行监听，不需要去监听用户的操作。使开发者只关注Model，不关注View
+        'lastName': function(newVal, oldVal) {
+          this.fullName = this.firstName + newVal
+        }
+    }
+  })
+</script>
+</body>
+</html>
+```
+
+### 8.4.3方式三(computed)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <!-- 1.导入vue的包 -->
+  <script src="./lib/vue-2.4.0.js"></script>
+</head>
+
+<body>
+
+  <div id="app">
+    <button @click="handlerSumName">点我</button>
+    <!-- 
+      分析：如果使firstName和lastName被修改时，同步修改fullName？
+     -->
+    <input type="text" v-model="firstName">
+    <input type="text" v-model="lastName">
+    <input type="text" v-model="sumName">
+
+  </div>
+
+  <script>
+    var vue = new Vue({
+      el: '#app',
+      data: {
+        firstName: '',
+        lastName: '',
+        fullName: ''
+      },
+      methods: {
+        handlerSumName() {
+          console.log(this.sumName)
+        }
+      },
+      computed: {
+        // 计算属性。在computed中，可以定义一些 属性 ，这些属性叫做计算属性、计算属性的本质就是一个方法，但是，当我们使用的时候，是将其视为属性去用的。
+        // 简单说就是一句话，按照method写，按照data去用。this.name，this.name()
+
+        // 注意：计算属性调用的时候，一定不要加()，它就是个属性，用法和data一模一样。
+        // 注意：只要计算属性中使用到的所有data中的属性发生了变化，就会立即去重新计算属性的值。
+        // 注意：计算属性的结果会被缓存起来，方便下次直接调用，如果计算属性中用到的所有的data都没有发生变化，就不会对计算属性重新求值。
+        sumName() {
+          console.log('计算属性执行了')
+          return this.firstName + this.lastName
+        }
+      }
+    })
+  </script>
+</body>
+</html>
+```
+
+## 8.5计算属性中的get/set方法
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue拼接-方法3</title>
+    <!--导入Vue的包-->
+    <script src="../lib/vue-2.4.0.js"></script>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="a" >
+        <input type="text" v-model="b" >
+        <input type="text" v-model="sum">
+        <button @click="handler">点击</button>
+    </div>
+
+    <script>
+
+        var vue = new Vue({
+            el:'#app',
+            data:{
+                a:1,
+                b:2
+            },
+            methods : {
+              handler(){
+                  console.log(this.sum);
+              }
+            },
+            computed : {
+                sum:{
+                    // get() : 是用于获取属性的值
+                    get(){
+                        console.log("computed方法执行了");
+                        return this.a + this.b;
+                    },
+                    // set() : 用于设置，当sum属性发生变化时，执行的操作
+                    set(){
+                        this.a = 666;
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+## 8.6监听器的使用
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+  <script src="./lib/vue-router-3.0.1.js"></script>
+</head>
+<style>
+  /* v-enter 这是个时间点，是进入之前，元素的起始状态，此时还没有进入 */
+  /* v-leave-to 这是个时间点，是动画离开之后，元素的终止状态，此时，元素 动画已经结束了 */
+  .component-enter,
+  .component-leave-to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  /* v-enter-active 入场动画的时间段 */
+  /* v-leave-active 离场动画的时间段 */
+  .component-enter-active,
+  .component-leave-active {
+    transition: all 0.5s ease;
+  }
+</style>
+
+<body>
+
+  <div id="app">
+    <!-- router-link控制组件的切换。router-link默认会被渲染成a标签 -->
+    <!-- 如果不想被渲染成a标签，可以使用tag属性，指定router-link被渲染成哪种标签 -->
+    <router-link to="/login" tag="button">登录</router-link>
+    <router-link to="/register">注册</router-link>
+
+    <transition name="component" mode="out-in">
+      <!-- 这是个坑，专门作为一个占位符。当路由进行切换的时候，在路由中匹配到对应的组件，就会展示在这个坑里  -->
+      <router-view></router-view>
+    </transition>
+
+  </div>
+
+  <script>
+    var login = {
+      template: '<p>我是登录组件</p>'
+    }
+    var register = {
+      template: '<p>我是注册组件</p>'
+    }
+
+    // 当引入了vue-router之后，在window全局对象中，就有了一个VueRouter构造函数
+    let routerObj = new VueRouter({
+      routes: [ // routes中定义了路由的规则
+        {path: '/', redirect: '/login'}, // redirect就是重定向，访问path时，会被重定向到redirect指定的路由。这里是指路由的重定向，而非请求重定向，和后端的redirect是两码事
+        {path: '/login', component: login}, // 对象中有两个属性：path：表示路由的url，component：表示路由跳转到的组件
+        {path: '/register', component: register}
+      ]
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+      },
+      router: routerObj,
+      watch: {
+        '$route.fullPath': function(newVal, oldVal) {
+          // 监听路由去执行对应的逻辑
+          // 应用场景:监听路由的url是否为登录url.如果不是,校验用户是否登录,未登录的情况下跳转到登录页
+          console.log('用户路由跳转，url为：',  newVal)
+        }
+      }
+    })
+  </script>
+</body>
+</html>
+```
+
+## 8.7编程式导航
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="./lib/vue-2.4.0.js"></script>
+  <script src="./lib/vue-router-3.0.1.js"></script>
+</head>
+<style>
+  /* v-enter 这是个时间点，是进入之前，元素的起始状态，此时还没有进入 */
+  /* v-leave-to 这是个时间点，是动画离开之后，元素的终止状态，此时，元素 动画已经结束了 */
+  .component-enter,
+  .component-leave-to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  /* v-enter-active 入场动画的时间段 */
+  /* v-leave-active 离场动画的时间段 */
+  .component-enter-active,
+  .component-leave-active {
+    transition: all 0.5s ease;
+  }
+</style>
+
+<body>
+
+  <div id="app">
+    <!-- router-link控制组件的切换。router-link默认会被渲染成a标签 -->
+    <!-- 如果不想被渲染成a标签，可以使用tag属性，指定router-link被渲染成哪种标签 -->
+    <router-link to="/login" tag="button">登录</router-link>
+    <router-link to="/register">注册</router-link>
+    <button @click="toLogin">跳转到登录</button>
+
+    <transition name="component" mode="out-in">
+      <!-- 这是个坑，专门作为一个占位符。当路由进行切换的时候，在路由中匹配到对应的组件，就会展示在这个坑里  -->
+      <router-view></router-view>
+    </transition>
+
+  </div>
+
+  <script>
+    var login = {
+      template: '<p>我是登录组件</p>',
+      created() {
+        console.log(this.$route)
+      }
+    }
+    var register = {
+      template: '<p>我是注册组件</p>'
+    }
+
+    // 当引入了vue-router之后，在window全局对象中，就有了一个VueRouter构造函数
+    let routerObj = new VueRouter({
+      routes: [ // routes中定义了路由的规则
+        {path: '/', redirect: '/login'}, // redirect就是重定向，访问path时，会被重定向到redirect指定的路由。这里是指路由的重定向，而非请求重定向，和后端的redirect是两码事
+        {path: '/login', component: login}, // 对象中有两个属性：path：表示路由的url，component：表示路由跳转到的组件
+        {path: '/register', component: register}
+      ]
+    })
+
+    var vue = new Vue({
+      el: '#app',
+      data: {
+      },
+      methods: {
+        toLogin() {
+          // 编程式导航：通过代码去操作路由
+          // this.$router.push('/login')
+          // 编程式路由如何传递参数
+          this.$router.push({
+            path: '/login', 
+            params: {id: '2121', name: '呵呵'}
+          })
+        }
+      },
+      router: routerObj,
+      watch: {
+        '$route.fullPath': function(newVal, oldVal) {
+          // 监听路由去执行对应的逻辑
+          // 应用场景:监听路由的url是否为登录url.如果不是,校验用户是否登录,未登录的情况下跳转到登录页
+          console.log('用户路由跳转，url为：',  newVal)
+        }
+      }
+    })
+
+  </script>
+</body>
+</html>
+```
+
+# 9、webpack
+
+***\*网页中静态文件过多会有什么问题？\****
+
+静态文件需要发起二次请求去引入，过多的时候会导致网页比较慢、卡。
+
+***\*网页中静态文件有哪些？\****
+
+Js：
+
+.js，.jsx，.ts
+
+Css：
+
+.css，.less，.sass
+
+图片：
+
+.jpg，.png，.gif等等
+
+ 
+
+***\*如何解决上述问题？\****
+
+合并、压缩、精灵图、base64、webpack
+
+**什么是webpack？**
+
+WebPack可以看做是**模块打包机**：它做的事情是，分析你的项目结构，找到JavaScript模块以及其它的一些浏览器不能直接运行的拓展语言（Scss，TypeScript等），并将其打包为合适的格式以供浏览器使用。
+
+**为什要使用WebPack**
+
+今的很多网页其实可以看做是功能丰富的应用，它们拥有着复杂的JavaScript代码和一大堆依赖包。为了简化开发的复杂度，前端社区涌现出了很多好的实践方法
+
+a:模块化，让我们可以把复杂的程序细化为小的文件;
+
+b:类似于TypeScript这种在JavaScript基础上拓展的开发语言：使我们能够实现目前版本的JavaScript不能直接使用的特性，并且之后还能能装换为JavaScript文件使浏览器可以识别；
+
+c:scss，less等CSS预处理器
+
+.........
+
+这些改进确实大大的提高了我们的开发效率，但是利用它们开发的文件往往需要进行额外的处理才能让浏览器识别,而手动处理又是非常繁琐的，这就为WebPack类的工具的出现提供了需求。
