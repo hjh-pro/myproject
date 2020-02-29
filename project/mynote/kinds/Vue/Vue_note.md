@@ -130,6 +130,60 @@ MVVM：是前端视图层的分层开发概念。MVVM将前端视图层分成了
 </html>
 ```
 
+**{{}}的补充：**
+
+1、只要符合javascript的语法规范都能写在{{}}中
+
+2、{{}}里面只能写表达式
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tittle</title>
+    <style>
+        *{margin:0;padding:0;}
+        li{list-style:none;}
+        a{text-decoration: none;}
+        body{user-select: none;}
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <p>{{msg + content + number1 }}</p>
+
+        <!--<p>{{msg + , + number1 }}</p>  vue会把,当作变量解析-->
+        <p>{{msg + ',' + number1 }}</p>
+
+        <p>{{isShow?msg:content}}</p>
+
+        <p v-html="isShow?msg:content"></p>
+
+        <p v-html=`${msg}abc${isShow}`></p>
+
+        <p v-html="isShow + 1"></p>
+
+    </div>
+    <script src="../lib/vue-2.4.0.js"></script>
+
+    <script>
+        new Vue({
+            el : "#wrap",
+            data : {
+                msg : '标题',
+                content : '内容',
+                number1: 111,
+                isShow : false
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+![image-20200229175600426](C:\Users\hjh\AppData\Roaming\Typora\typora-user-images\image-20200229175600426.png)
+
 ## 3.2、v-bind、v-on
 
 v-on：绑定事件，简写成：@click="方法名"
@@ -175,6 +229,211 @@ v-on：绑定事件，简写成：@click="方法名"
       }
     })
   </script>
+</body>
+</html>
+```
+
+**v-on高级用法**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tittle</title>
+    <style>
+        *{margin:0;padding:0;}
+        li{list-style:none;}
+        a{text-decoration: none;}
+        body{user-select: none;}
+    </style>
+</head>
+<body>
+    <div id="wrap">
+
+        <!--按任意键，按下时都会触发-->
+        <!--<input type="text" @keydown="add">
+        <p>{{number}}</p>-->
+
+        <!--只有按enter时才会触发 -- 方式1-->
+        <input type="text" @keydown.13="add">
+        <p>{{number}}</p>
+
+        <!--只有按enter时才会触发 -- 方式2-->
+        <input type="text" @keydown.enter="add">
+        <p>{{number}}</p>
+        
+        <!--  .是修饰符，可以多个 -->
+        <input type="text" @keydown.enter.space="add">
+        <p>{{number}}</p>
+
+    </div>
+    <script src="../lib/vue-2.4.0.js"></script>
+    <script>
+        new Vue({
+            el : "#wrap",
+            data : {
+                number : 0
+            },
+            methods : {
+               add(){
+                   this.number++;
+               }
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tittle</title>
+    <style>
+        *{margin:0;padding:0;}
+        li{list-style:none;}
+        a{text-decoration: none;}
+        body{user-select: none;}
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <button @click.once="add">一次事件</button>
+        <p>{{num}}</p>
+
+        <button @click.left="add">只有左键点击触发事件</button>
+        <button @click.middle="add">只有中键点击触发事件</button>
+        <button @click.right="add">只有右键点击触发事件</button>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <script>
+        new Vue({
+            el : "#wrap",
+            data : {
+                num : 0
+            },
+            methods : {
+                add(){
+                    this.num ++ ;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tittle</title>
+    <style>
+        *{margin:0;padding:0;}
+        li{list-style:none;}
+        a{text-decoration: none;}
+        body{user-select: none;}
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <!--事件冒泡-->
+        <div @click="add">
+            <button @click="add">一次事件</button>
+        </div>
+        {{num}}
+        <!--阻止冒泡-->
+        <div @click="add">
+            <button @click.stop="add">一次事件</button>
+        </div>
+
+        <!--阻止默认事件-->
+        <button @click.right.prevent="add">右键 触发，阻止默认事件</button>
+        <a href="https://www.baidu.com" @click.prevent="add">百度</a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <script>
+        new Vue({
+            el : "#wrap",
+            data : {
+                num : 0
+            },
+            methods : {
+                add(){
+                    this.num ++ ;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+**多个事件的绑定**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tittle</title>
+    <style>
+        *{margin:0;padding:0;}
+        li{list-style:none;}
+        a{text-decoration: none;}
+        body{user-select: none;}
+        .goudan{
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <!--绑定多个事件必须用v-on=""-->
+        <!--""里面是对象-->
+        <div
+            class="goudan"
+            v-on="{
+                click:add,
+                mouseenter:reduce
+            }"
+        >
+        </div>
+        {{num}}
+
+        <!--多个事件的绑定-->
+        <a href="https://www.baidu.com"
+            @click.left.prevent="add"
+            @click.right.prevent="add"
+        >百度</a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <script>
+        new Vue({
+            el : "#wrap",
+            data : {
+                num : 0
+            },
+            methods : {
+                add(){
+                    this.num ++ ;
+                },
+                reduce(){
+                    this.num--;
+                }
+            }
+        });
+    </script>
 </body>
 </html>
 ```
@@ -621,7 +880,7 @@ v-on：绑定事件，简写成：@click="方法名"
 
 **重点：**
 
-	1. findIndex():根据条件可以返回匹配的对象，参数是一个函数
+	1. findIndex():根据条件可以返回匹配的对象的索引，参数是一个函数
  	2. splice() : 删除对应索引位置的数据，第一个参数为索引，第二个参数为从当前索引位置删除的个数
  	3. filter() : 根据条件可以返回匹配的数组，里面用到字符串的方法是includes()：包含某个字符串，参数是一个函数，**第一参数与findIndex（）中一样都是遍历数组中的每个对象**
 
